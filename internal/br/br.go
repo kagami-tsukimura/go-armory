@@ -3,16 +3,12 @@ package br
 
 import (
 	"fmt"
-	"os"
-	"os/exec"
+
+	"github.com/kagami-tsukimura/go-armory/internal"
 )
 
 func Run() {
-	cmd := exec.Command("git", "branch", "-a")
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-
-	if err := cmd.Run(); err != nil {
-		fmt.Printf("Command Error: %v\n", err)
+	if err := internal.RunCmd("git", "branch", "-a"); err != nil {
+		fmt.Println(err)
 	}
 }

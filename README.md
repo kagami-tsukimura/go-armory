@@ -16,7 +16,7 @@ You can install the command directly from GitHub repository.
 
 ```sh
 # Install the 'br' command
-go install github.com/YOUR_USERNAME/go-armory/cmd/br@latest
+go install github.com/kagami-tsukimura/go-armory/cmd/br@latest
 ```
 
 The binary will be installed in your `$GOPATH/bin` (or `$HOME/go/bin`). Make sure this directory is in your `PATH`.

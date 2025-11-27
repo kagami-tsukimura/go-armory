@@ -1,0 +1,39 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Detect Go version from go.mod
+        id: goversion
+        # version=go.modのバージョン
+        run: echo "version=$(grep '^go ' go.mod | awk '{print $2}')" >> $GITHUB_OUTPUT
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ steps.goversion.outputs.version }}
+
+      - name: Build binaries for all commands
+        run: |
+          mkdir -p dist
+
+          for dir in $(find cmd -maxdepth 1 -mindepth 1 -type d); do
+            name=$(basename "$dir")
+            echo "Building $name ..."
+            GOOS=linux   GOARCH=amd64 go build -o dist/${name}-linux-amd64   ./$dir
+            GOOS=darwin  GOARCH=amd64 go build -o dist/${name}-darwin-amd64 ./$dir
+            GOOS=windows GOARCH=amd64 go build -o dist/${name}-windows-amd64.exe ./$dir
+          done
+
+      - name: Upload Release Assets
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*

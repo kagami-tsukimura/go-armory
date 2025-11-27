@@ -10,14 +10,14 @@ There are several ways to install the tools.
 
 You can install all available commands by cloning the repository and running the installation script.
 
-The script attempts to install the commands to `/usr/local/bin`. If it does not have write permissions, it will automatically use `sudo` and prompt for a password.
+The script installs the commands to **`$HOME/.local/bin`**.
 
 ```sh
 git clone https://github.com/kagami-tsukimura/go-armory.git
 cd go-armory
 # Add execute permission to the script
 chmod +x ./install.sh
-# Run the script
+# Run the script (It automatically uses the latest version)
 ./install.sh
 ```
 

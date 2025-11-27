@@ -2,16 +2,16 @@
 set -euo pipefail
 
 REPO="kagami-tsukimura/go-armory"
-VERSION="${1:-latest}"
+# GitHubの "latest" URLからリダイレクト先のタグ名を取得する
+echo "Fetching latest version tag..."
+VERSION=$(basename $(curl -Ls -o /dev/null -w %{url_effective} "https://github.com/$REPO/releases/latest"))
+echo "${VERSION} fetched."
 
-BIN_DIR="/usr/local/bin"
+# Install location under user's home
+BIN_DIR="${HOME}/.local/bin"
 
-# 書き込み可能かどうか判定
-if [ -w "$BIN_DIR" ]; then
-  SUDO=""
-else
-  SUDO="sudo"
-fi
+# Create the directory if it does not exist
+mkdir -p "$BIN_DIR"
 
 install() {
   cmd=$1
@@ -21,18 +21,19 @@ install() {
   dest="$BIN_DIR/$cmd"
 
   echo "Downloading $cmd ..."
-
-  # sudo いる/いらないを自動切替
-  $SUDO curl -L -o "$dest" "$url"
-  $SUDO chmod +x "$dest"
+  curl -L -o "$dest" "$url"
+  chmod +x "$dest"
 }
 
 if [ $# -eq 0 ]; then
-  # デフォルト：全部インストール
+  # Default: install all commands
   for cmd in $(ls cmd); do
     install "$cmd"
   done
 else
-  # 引数指定：そのコマンドのみ
+  # Install only the specified command
   install "$1"
 fi
+
+echo "Done. Make sure $BIN_DIR is in your PATH:"
+echo "  export PATH=\"\$HOME/.local/bin:\$PATH\""

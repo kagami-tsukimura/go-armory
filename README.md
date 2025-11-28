@@ -15,8 +15,6 @@ The script installs the commands to **`$HOME/.local/bin`**.
 ```sh
 git clone https://github.com/kagami-tsukimura/go-armory.git
 cd go-armory
-# Add execute permission to the script
-chmod +x ./install.sh
 # Run the script (It automatically uses the latest version)
 ./install.sh
 ```

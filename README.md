@@ -30,11 +30,11 @@ You can also download a specific binary directly from the [Releases page](https:
 Choose the correct file for your OS and architecture, place it in a directory included in your `PATH` (e.g., `/usr/local/bin` or `~/bin`), and make it executable.
 
 ```sh
-# Example: Install the 'br' command for linux (amd64) to /usr/local/bin
+# Example: Install the 'br' command for linux (amd64)
 # Please replace VX.X.X with the latest version number.
 VERSION="vX.X.X"
-curl -L -o /usr/local/bin/br https://github.com/kagami-tsukimura/go-armory/releases/download/${VERSION}/br-linux-amd64
-chmod +x /usr/local/bin/br
+curl -L -o $HOME/.local/bin/br https://github.com/kagami-tsukimura/go-armory/releases/download/${VERSION}/br-linux-amd64
+chmod +x $HOME/.local/bin/br
 ```
 
 ### From Source (For Go Developers)

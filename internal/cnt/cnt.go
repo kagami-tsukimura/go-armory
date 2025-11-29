@@ -2,52 +2,40 @@
 package cnt
 
 import (
-	"bytes"
 	"fmt"
+	"io/fs"
 	"os"
-	"os/exec"
 )
 
 func Run() {
-	var targetDir string = "./"
+	targetDir := "./"
+	// count target is os.Args[1]
 	if len(os.Args) > 1 {
 		targetDir = os.Args[1]
 	}
 
-	findCmd := exec.Command("find", targetDir, "-type", "f")
-	wcCmd := exec.Command("wc", "-l")
-
-	findStdout, err := findCmd.StdoutPipe()
+	count, err := countFiles(targetDir)
 	if err != nil {
-		fmt.Fprintln(os.Stderr, "stdin pipe error:", err)
+		fmt.Println(err)
 		os.Exit(1)
 	}
 
-	wcCmd.Stdin = findStdout
+	fmt.Println(count)
+}
 
-	var wcOut bytes.Buffer
-	wcCmd.Stdout = &wcOut
+func countFiles(targetDir string) (int, error) {
+	var count int
 
-	if err := findCmd.Start(); err != nil {
-		fmt.Fprintln(os.Stderr, "find start error:", err)
-		os.Exit(1)
-	}
+	// count all files recursively
+	err := fs.WalkDir(os.DirFS(targetDir), ".", func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if !d.IsDir() {
+			count++
+		}
+		return nil
+	})
 
-	if err := wcCmd.Start(); err != nil {
-		fmt.Fprintln(os.Stderr, "wc start error:", err)
-		os.Exit(1)
-	}
-
-	if err := findCmd.Wait(); err != nil {
-		fmt.Fprintln(os.Stderr, "find wait error:", err)
-		os.Exit(1)
-	}
-
-	if err := wcCmd.Wait(); err != nil {
-		fmt.Fprintln(os.Stderr, "wc wait error:", err)
-		os.Exit(1)
-	}
-
-	fmt.Printf("%s", wcOut.String())
-
+	return count, err
 }

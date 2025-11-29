@@ -66,7 +66,7 @@ func requireIsPiped() error {
 	isPiped := (stat.Mode() & os.ModeCharDevice) == 0
 
 	if !isPiped {
-		return fmt.Errorf("no pipe input detected: \nusage: echo \"text\" | your_command")
+		return fmt.Errorf("no pipe input detected: \nusage: echo \"text\" | cl")
 	}
 	return nil
 }

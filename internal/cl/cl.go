@@ -50,7 +50,7 @@ func validate() error {
 		return err
 	}
 
-	if err := requireHasPipe(); err != nil {
+	if err := requireIsPiped(); err != nil {
 		return err
 	}
 	return nil
@@ -63,12 +63,12 @@ func requireXselCommand() error {
 	return nil
 }
 
-func requireHasPipe() error {
+func requireIsPiped() error {
 	stat, _ := os.Stdin.Stat()
-	hasPipe := (stat.Mode() & os.ModeCharDevice) == 0
+	isPiped := (stat.Mode() & os.ModeCharDevice) == 0
 
-	if !hasPipe {
-		return fmt.Errorf("no pipe input detected: \nusage: echo \"text\" | your_command")
+	if !isPiped {
+		return fmt.Errorf("no pipe input detected: \nusage: echo \"text\" | cl")
 	}
 	return nil
 }

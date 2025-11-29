@@ -3,6 +3,7 @@ package br
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/kagami-tsukimura/go-armory/internal"
 )
@@ -10,5 +11,6 @@ import (
 func Run() {
 	if err := internal.RunCmd("git", "branch", "-a"); err != nil {
 		fmt.Println(err)
+		os.Exit(1)
 	}
 }

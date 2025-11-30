@@ -26,12 +26,12 @@ func Run() {
 	cmd := exec.Command("xsel", "--clipboard")
 	stdin, err := cmd.StdinPipe()
 	if err != nil {
-		fmt.Fprintln(os.Stderr, "stdin pipe error:", err)
+		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 
 	if err := cmd.Start(); err != nil {
-		fmt.Fprintln(os.Stderr, "command start error:", err)
+		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 
@@ -40,7 +40,7 @@ func Run() {
 	stdin.Close()
 
 	if err := cmd.Wait(); err != nil {
-		fmt.Fprintln(os.Stderr, "command wait error:", err)
+		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 }

@@ -5,11 +5,18 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+
+	"github.com/kagami-tsukimura/go-armory/internal"
 )
 
 func Run() {
 	home, err := validate()
 	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+
+	if err := internal.RunCmd("git", "checkout", "develop"); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}

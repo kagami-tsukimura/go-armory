@@ -10,7 +10,7 @@ import (
 
 func Run() {
 	if err := internal.RunCmd("lazygit"); err != nil {
-		fmt.Println(err)
+		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 }

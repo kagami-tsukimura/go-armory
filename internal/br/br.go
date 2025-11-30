@@ -10,7 +10,7 @@ import (
 
 func Run() {
 	if err := internal.RunCmd("git", "branch", "-a"); err != nil {
-		fmt.Println(err)
+		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 }

@@ -10,7 +10,9 @@ import (
 
 func Run() {
 	if err := internal.RunCmd("docker", "compose", "ps"); err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
+		if err := internal.RunCmd("docker", "ps"); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
 	}
 }

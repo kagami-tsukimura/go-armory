@@ -2,10 +2,11 @@
 package cl
 
 import (
-	"bufio"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
+	"strings"
 )
 
 func Run() {
@@ -14,12 +15,13 @@ func Run() {
 		os.Exit(1)
 	}
 
-	var data string
 	// read input via pipe
-	scanner := bufio.NewScanner(os.Stdin)
-	for scanner.Scan() {
-		data += scanner.Text() + "\n"
+	data, err := io.ReadAll(os.Stdin)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "read error:", err)
+		os.Exit(1)
 	}
+	dataStr := strings.TrimRight(string(data), "\r\n")
 
 	cmd := exec.Command("xsel", "--clipboard")
 	stdin, err := cmd.StdinPipe()
@@ -34,7 +36,7 @@ func Run() {
 	}
 
 	// write stdin of xsel
-	_, _ = stdin.Write([]byte(data))
+	_, _ = stdin.Write([]byte(dataStr))
 	stdin.Close()
 
 	if err := cmd.Wait(); err != nil {

@@ -9,10 +9,9 @@ import (
 	"strings"
 )
 
-func Run() {
+func Run() error {
 	if err := validate(); err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
+		return err
 	}
 
 	// read input via pipe
@@ -26,13 +25,11 @@ func Run() {
 	cmd := exec.Command("xsel", "--clipboard")
 	stdin, err := cmd.StdinPipe()
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
+		return err
 	}
 
 	if err := cmd.Start(); err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
+		return err
 	}
 
 	// write stdin of xsel
@@ -40,9 +37,9 @@ func Run() {
 	stdin.Close()
 
 	if err := cmd.Wait(); err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
+		return err
 	}
+	return nil
 }
 
 func validate() error {

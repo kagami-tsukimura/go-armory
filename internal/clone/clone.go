@@ -17,5 +17,8 @@ func Run() {
 	}
 	// slice in parts
 	cmdArgs := append([]string{"clone"}, os.Args[1:]...)
-	internal.RunCmd("git", cmdArgs...)
+	if err := internal.RunCmd("git", cmdArgs...); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
 }

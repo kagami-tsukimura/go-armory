@@ -8,8 +8,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
-      - uses: actions/checkout@v4
+      # Pin actions to full commit hash for security (mitigate supply chain attacks)
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.1.7
 
       - name: Detect Go version from go.mod
         id: goversion
@@ -17,7 +20,7 @@ jobs:
         run: echo "version=$(grep '^go ' go.mod | awk '{print $2}')" >> $GITHUB_OUTPUT
 
       - name: Set up Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491 # v5.0.0
         with:
           go-version: ${{ steps.goversion.outputs.version }}
 
@@ -34,6 +37,26 @@ jobs:
           done
 
       - name: Upload Release Assets
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@5be0e66d93 # v2.4.2
         with:
           files: dist/*
+
+  notify:
+    name: Slack Notification
+    runs-on: ubuntu-latest
+    needs: [build]
+    if: failure()
+    steps:
+      - name: Notify Slack on Failure
+        uses: rtCamp/action-slack-notify@e31e87e03bca4d44e5999eb3ecff9c14c4f42b67 # v2.3.3
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_COLOR: danger
+          SLACK_TITLE: '❌ Release Failed'
+          SLACK_MESSAGE: |
+            <@U06Q4AVJUPJ> Release workflow failed.
+            *Tag:* `${{ github.ref_name }}`
+            *Commit:* `${{ github.sha }}`
+            *Actor:* ${{ github.actor }}
+            *Details:* ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          SLACK_FOOTER: 'go-armory Release'

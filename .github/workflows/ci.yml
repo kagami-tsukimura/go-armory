@@ -71,7 +71,7 @@ jobs:
     if: failure()
     steps:
       - name: Notify Slack on Failure
-        uses: rtCamp/action-slack-notify@e31e87e03bca4d44e5999eb3ecff9c14c4f42b67 # v2.3.3
+        uses: rtCamp/action-slack-notify@cdf0a2130cbcdfd82ba5fcac8e076370bf381b36 # v2
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
           SLACK_COLOR: danger

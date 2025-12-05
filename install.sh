@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -uo pipefail
 
 REPO="kagami-tsukimura/go-armory"
 # GitHubの "latest" URLからリダイレクト先のタグ名を取得する
@@ -13,6 +13,9 @@ BIN_DIR="${HOME}/.local/bin"
 # Create the directory if it does not exist
 mkdir -p "$BIN_DIR"
 
+# Track failed installations
+FAILED=()
+
 install() {
   cmd=$1
   base="https://github.com/$REPO/releases/download/$VERSION"
@@ -21,8 +24,12 @@ install() {
   dest="$BIN_DIR/$cmd"
 
   echo "Downloading $cmd ..."
-  curl -L -o "$dest" "$url"
-  chmod +x "$dest"
+  if curl -L -o "$dest" "$url" && chmod +x "$dest"; then
+    echo "  $cmd installed successfully."
+  else
+    echo "  [WARN] Failed to install $cmd (file may be in use)."
+    FAILED+=("$cmd")
+  fi
 }
 
 if [ $# -eq 0 ]; then
@@ -35,5 +42,17 @@ else
   install "$1"
 fi
 
-echo "Done. Make sure $BIN_DIR is in your PATH:"
+# Report results
+if [ ${#FAILED[@]} -eq 0 ]; then
+  echo "Done. All commands installed successfully."
+else
+  echo ""
+  echo "[WARN] The following commands failed to install:"
+  for cmd in "${FAILED[@]}"; do
+    echo "  - $cmd"
+  done
+  echo "Retry after stopping the running commands."
+fi
+
+echo "Make sure $BIN_DIR is in your PATH:"
 echo "  export PATH=\"\$HOME/.local/bin:\$PATH\""

@@ -68,8 +68,9 @@ func createCoreLogic(home string) error {
 	fileContent := fmt.Sprintf(`// Package %s provides the core logic for the "%s" CLI command.
 package %s
 
-func Run() {
+func Run() error {
 
+	return nil
 }
 `, os.Args[1], os.Args[1], os.Args[1])
 
@@ -84,11 +85,17 @@ func createCommand(home string) error {
 	fileContent := fmt.Sprintf(`package main
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/kagami-tsukimura/go-armory/internal/%s"
 )
 
 func main() {
-	%s.Run()
+	if err := %s.Run(); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
 }
 `, os.Args[1], os.Args[1])
 

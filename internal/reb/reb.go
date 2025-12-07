@@ -4,10 +4,7 @@ package reb
 import "github.com/kagami-tsukimura/go-armory/internal"
 
 func Run() error {
-	if err := internal.RunCmd("pkill", "code"); err != nil {
-		return err
-	}
-
+	_ = internal.RunCmd("pkill", "code")
 	if err := internal.RunCmd("sudo", "shutdown", "-r", "now"); err != nil {
 		return err
 	}
